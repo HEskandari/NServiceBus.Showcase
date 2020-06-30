@@ -1,18 +1,16 @@
 using System;
 using System.Threading.Tasks;
 using NServiceBus;
-using NServiceBus.Logging;
-using NServiceBus.Serilog;
-using Serilog;
+using Store.Shared;
 
 class Program
 {
     static async Task Main()
     {
         Console.Title = "Samples.Store.Sales";
-        
-        CreateLogger();
-        
+
+        SerilogConfigurer.Configure();
+
         var endpointConfiguration = new EndpointConfiguration("Store.Sales");
         endpointConfiguration.ApplyCommonConfiguration();
 
@@ -22,16 +20,5 @@ class Program
         Console.ReadKey();
         await endpointInstance.Stop()
             .ConfigureAwait(false);
-    }
-    
-    static void CreateLogger()
-    {
-        Log.Logger = new LoggerConfiguration()
-            .Enrich.FromLogContext()
-            .WriteTo.Seq(serverUrl: "http://localhost:8889")
-            .WriteTo.Console()
-            .CreateLogger();
-            
-        LogManager.Use<SerilogFactory>();
     }
 }

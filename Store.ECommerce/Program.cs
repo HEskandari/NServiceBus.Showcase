@@ -3,27 +3,14 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
     using NServiceBus;
-    using NServiceBus.Logging;
-    using NServiceBus.Serilog;
-    using Serilog;
+    using Store.Shared;
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            CreateLogger();
+            SerilogConfigurer.Configure();
             BuildWebHost(args).Build().Run();
-        }
-
-        static void CreateLogger()
-        {
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Seq(serverUrl: "http://localhost:8889")
-                .WriteTo.Console()
-                .CreateLogger();
-            
-            LogManager.Use<SerilogFactory>();
         }
 
         public static IHostBuilder BuildWebHost(string[] args) =>
